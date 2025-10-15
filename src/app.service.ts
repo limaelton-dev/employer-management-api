@@ -15,14 +15,12 @@ export class AppService {
 
   async seed() {
     await this.dataSource.transaction(async (db) => {
-      const contactInfo = db.create(ContactInfo, {
-        email: 'mrjones@email.com'
-      })
-
 
       const ceo = db.create(Employee, {
-        name: 'Mr Jones',
-        contactInfo: contactInfo,
+        name: 'CEO Mr Jones',
+        contactInfo: db.create(ContactInfo, {
+          email: 'mrjones@email.com'
+        }),
       })
 
       await db.save(ceo);
@@ -30,7 +28,9 @@ export class AppService {
       const manager = db.create(Employee, {
         name: 'Manager',
         manager: ceo,
-        contactInfo: db.create(ContactInfo, {})
+        contactInfo: db.create(ContactInfo, {
+          email: 'manager@email.com'
+        })
       });
 
       await db.save(manager)
