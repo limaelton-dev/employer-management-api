@@ -1,0 +1,2 @@
+### get employees
+GET http://localhost:3000/reports/employees

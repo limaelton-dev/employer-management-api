@@ -1,0 +1,36 @@
+###get employee
+GET http://localhost:3000/employees/3
+
+###create employee
+POST http://localhost:3000/employees
+Content-Type: application/json
+
+{
+    "name": "Mr. Elton Employee",
+    "managerId": 2,
+    "contactInfo": { 
+        "email": "mrelton@email.com", 
+        "phone": "+5544999999999"
+    }
+}
+
+###update employee
+PATCH  http://localhost:3000/employees/3
+Content-Type: application/json
+
+{
+    "name": "Mr. Elton Changed",
+    "managerId": 1,
+    "contactInfo": { 
+        "email": "changed-mrelton@email.com", 
+        "phone": "+5544999999991"
+    }
+}
+
+###assign manager
+PATCH  http://localhost:3000/employees/3/assign-manager
+Content-Type: application/json
+
+{
+    "managerId": 2
+}
