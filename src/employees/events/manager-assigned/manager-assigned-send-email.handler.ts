@@ -30,7 +30,7 @@ export class ManagerAssigned_SendEmailHandler implements IEventHandler<ManagerAs
                 Sending email to ${manager.contactInfo!.email} 
                 with body 
                     '${employee?.name} joined their team'`);
-        }, 4000);
+        }, 1000);
     }
 
 }

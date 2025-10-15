@@ -3,14 +3,14 @@ import { UpdateEmployeeCommand } from "./update-employee.command";
 import { DataSource } from "typeorm";
 import { InjectDataSource } from "@nestjs/typeorm";
 import { Employee } from "src/employees/entities/employee.entity";
-import { ManagerAssignedEvent } from "src/employees/events/manager-assigned/manager-assigned.event";
+import { EntityEventsDispatcher } from "src/common/events/entity-events.dispatcher";
 
 @CommandHandler(UpdateEmployeeCommand)
 export class UpdateEmployeeHandler implements ICommandHandler<UpdateEmployeeCommand, number>{
     constructor(
         @InjectDataSource()
         private readonly dataSource: DataSource,
-        private readonly eventBus: EventBus
+        private readonly eventDispatcher: EntityEventsDispatcher
     ) {}
 
 
@@ -28,11 +28,7 @@ export class UpdateEmployeeHandler implements ICommandHandler<UpdateEmployeeComm
             db.merge(Employee, employee, command);
             await db.save(Employee, employee);
 
-            if(isNewManager) {
-                await this.eventBus.publish(
-                    new ManagerAssignedEvent(employee.id, employee.managerId!),
-                );
-            }
+            await this.eventDispatcher.dispatch(employee);
 
             return 1;
         })

@@ -4,14 +4,14 @@ import { DataSource } from "typeorm";
 import { InjectDataSource } from "@nestjs/typeorm";
 import { ContactInfo } from "src/employees/entities/contact-info.entity";
 import { Employee } from "src/employees/entities/employee.entity";
-import { ManagerAssignedEvent } from "src/employees/events/manager-assigned/manager-assigned.event";
+import { EntityEventsDispatcher } from "src/common/events/entity-events.dispatcher";
 
 @CommandHandler(CreateEmployeeCommand)
 export class CreateEmployeeHandler implements ICommandHandler<CreateEmployeeCommand, number>{
     constructor(
         @InjectDataSource()
         private readonly dataSource: DataSource,
-        private readonly eventBus: EventBus
+        private readonly eventDispatcher: EntityEventsDispatcher
     ) {}
 
 
@@ -26,12 +26,7 @@ export class CreateEmployeeHandler implements ICommandHandler<CreateEmployeeComm
             })
       
             await db.save(employee);
-
-            if(command.managerId) {
-                await this.eventBus.publish(
-                    new ManagerAssignedEvent(employee.id, employee.managerId!),
-                );
-            }
+            await this.eventDispatcher.dispatch(employee);
 
             return employee.id
         })
